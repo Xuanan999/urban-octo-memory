@@ -5,7 +5,8 @@ if game.PlaceId == 2753915549 then
     elseif game.PlaceId == 7449423635 then
         World3 = true
     end
-
+game:GetService("Players").LocalPlayer:Kick("Do not Support, Please wait...")
+end
 	function CheckQuest() 
         MyLevel = game:GetService("Players").LocalPlayer.Data.Level.Value
         if World1 then
