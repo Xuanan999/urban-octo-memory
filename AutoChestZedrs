@@ -1,0 +1,114 @@
+DiscordLib:Notification("Auto Chest Start" , "Working Chest" , 6 ,16243047096 )
+	DiscordLib:Notification("Script By AnDepZai" , 6 ,16243047096 )
+
+AutoFarmChest = true
+
+   spawn(function()
+        while true do 
+                if AutoFarmChest then
+                    for i,v in pairs(game:GetService("Workspace"):GetChildren()) do 
+                        if v.Name:find("Chest") then
+                        	if (game:GetService("Workspace"):FindFirstChild(v.Name)) then
+                            	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+                            	if string.find(v.Name, "Chest") and v:IsA("TouchTransmitter") then
+								   firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, v.Parent, 0)
+							    end
+                            end
+                        end
+						if not (game:GetService("Workspace"):FindFirstChild("Chest1") or game:GetService("Workspace"):FindFirstChild("Chest2") or game:GetService("Workspace"):FindFirstChild("Chest3")) then 
+                            starthop = true
+                        end
+                    end
+                end
+            task.wait()
+        end
+    end)
+    spawn(function()
+        while true do 
+                if AutoFarmChest and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Head") then
+                	wait(getgenv().Setting.TimeReset)
+					if getgenv().Setting.Team == "Pirates" or getgenv().Setting.Team == nil then
+                		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
+						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines")
+					elseif getgenv().Setting.Team == "Marines" then
+						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines")
+						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
+					end
+                end
+			task.wait()
+        end
+    end)
+    spawn(function()
+	    while true do
+	        if starthop then
+	          	HopServer()
+	        end
+	        wait()
+	    end
+	end)
+	function HopServer(bO)
+	    if not bO then
+	        bO = 10
+	    end
+	    ticklon = tick()
+	    repeat
+	        task.wait()
+	    until tick() - ticklon >= 1
+	    local function Hop()
+	        for r = 1, math.huge do
+	            if ChooseRegion == nil or ChooseRegion == "" then
+	                ChooseRegion = "Singapore"
+	            else
+	                game:GetService("Players").LocalPlayer.PlayerGui.ServerBrowser.Frame.Filters.SearchRegion.TextBox.Text =
+	                    ChooseRegion
+	            end
+	            local bP = game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer(r)
+	            for k, v in pairs(bP) do
+	                if k ~= game.JobId and v["Count"] < bO then
+	                   game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", k)
+	                end
+	            end
+	        end
+	        return false
+	    end
+	    if not getgenv().Loaded then
+	        local function bQ(v)
+	            if v.Name == "ErrorPrompt" then
+	                if v.Visible then
+	                    if v.TitleFrame.ErrorTitle.Text == "Teleport Failed" then
+	                        HopServer()
+	                        v.Visible = false
+	                    end
+	                end
+	                v:GetPropertyChangedSignal("Visible"):Connect(
+	                    function()
+	                        if v.Visible then
+	                            if v.TitleFrame.ErrorTitle.Text == "Teleport Failed" then
+	                                HopServer()
+	                                v.Visible = false
+	                            end
+	                        end
+	                    end
+	                )
+	            end
+	        end
+	        for k, v in pairs(game.CoreGui.RobloxPromptGui.promptOverlay:GetChildren()) do
+	            bQ(v)
+	        end
+	        game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(bQ)
+	        getgenv().Loaded = true
+	    end
+	    while not Hop() do
+	        wait()
+	    end
+	end
+
+spawn(function()
+	while wait() do
+		if getgenv().Setting.ModeFarm.StopItemLegendary == true then
+			if game.Players.LocalPlayer.Backpack:FindFirstChild("Fist of Darkness") or game.Players.LocalPlayer.Character:FindFirstChild("Fist of Darkness") or game.Players.LocalPlayer.Backpack:FindFirstChild("God's Chalice") or game.Players.LocalPlayer.Character:FindFirstChild("God's Chalice") then
+				AutoFarmChest = false
+			end
+		end
+	end
+end)
